@@ -63,3 +63,78 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const refs = {
+  galleryRef: document.querySelector('.js-gallery'),
+  modal: document.querySelector('div.lightbox'), 
+  imageRef: document.querySelector('.lightbox__image'),
+  closeBtn: document.querySelector('.lightbox__button'),
+  overlay: document.querySelector('.lightbox__overlay'),
+}
+
+const galleryContainer = makeGallery(galleryItems)
+
+function makeGallery(galleryItem) {
+    return galleryItem.map(({ preview, original, description }) => {
+        return `
+            <li class="gallery__item">
+            <a
+                class="gallery__link"
+                href="${original}"
+            >
+            <img
+                class="gallery__image"
+                src="${preview}"
+                data-source="${original}"
+                alt="${description}"
+            />
+             </a>
+            </li>
+        `
+    }).join('');
+}
+refs.galleryRef.insertAdjacentHTML('beforeend', galleryContainer);
+
+console.log(refs.galleryRef)
+
+//----
+
+function openModal(e) {
+    if (e.target.classList.add('is-open')) {
+        return;
+    }
+    else {
+        refs.modal.classList.add('is-open');
+        refs.imageRef.src = e.target.dataset.source;
+        refs.imageRef.alt = e.target.alt;
+    }
+    offDev(e);
+};
+
+refs.galleryRef.addEventListener('click', openModal);
+refs.modal.addEventListener('click', closeModal);
+
+function offDev(e) {
+    e.preventDefault();
+}
+
+
+function closeModal() {
+    if (!refs.modal.classList.contains('is-open')) {
+        return;
+    } else {
+        refs.modal.classList.remove('is-open');
+        refs.imageRef.src = ''
+    }
+};
+
+window.addEventListener('keydown', onEscKeyPress);
+
+function onEscKeyPress(e) {
+    console.log(e.code);
+        
+        if (e.code === 'Escape') {
+            closeModal()            
+        }
+}
+
